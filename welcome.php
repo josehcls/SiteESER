@@ -20,7 +20,7 @@
 		// output data of each linha
 		while($linha = mysqli_fetch_assoc($result)) {
 			echo $linha["username"]. " " . $linha["password"] . "<br>";
-		}
+		} 
 	} else {
 		echo "0 results";
 	}
