@@ -15,19 +15,23 @@
 	  $conn = mysqli_connect('localhost', 'root', '', 'cadastro');
 	  $sql = "select * from users";
       $result = mysqli_query($db,$sql);
-      
-	if (mysqli_num_rows($result) > 0) {
-		// output data of each linha
-		while($linha = mysqli_fetch_assoc($result)) {
-			echo $linha["username"]. " " . $linha["password"] . "<br>";
-		} 
+    	
+	if ($tipo_session == 1) {
+		//checa tipo de usuario
+		if (mysqli_num_rows($result) > 0) {
+			// output data of each linha
+			while($linha = mysqli_fetch_assoc($result)) {
+				echo $linha["username"]. " " . $linha["password"] . "<br>";
+			} 
+		} else {
+			echo "0 results";
+		}
 	} else {
-		echo "0 results";
+		echo "Sem permissão";
 	}
-
 	?>
 	  
-	  
+		<h3><a href = "seguir.php">Prosseguir</a></h3>  
 	  
    </body>
    
