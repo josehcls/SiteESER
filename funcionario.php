@@ -1,61 +1,100 @@
 <?php
    include('session.php');
+   include('background.php');
+   
+      	  $conn = mysqli_connect('localhost', 'root', '', 'cadastro');
+          $sql1 = "select ID, ender, status from funcionarios F, entregas E  where F.username = '$login_session'     AND F.func_ID = E.func_ID";
+          $result = mysqli_query($db,$sql1);      
 
-            	  $conn = mysqli_connect('localhost', 'root', '', 'cadastro');
-	            $sql1 = "select ID, ender, status from funcionarios F, entregas E  where F.username = '$login_session'     AND F.func_ID = E.func_ID";
-                 $result = mysqli_query($db,$sql1);   
-                $i = 0;
-   
+function mudaEntrega($eid,$estado) {
+    $sql3 = "update entregas set status = '$estado' where ID = '$eid'";
+    if (mysqli_query($db,$sql3) === TRUE) {
+        echo "Informacoes alteradas com sucesso";
+    } else {
+        echo "Entrega inválida" ;
+    }    
+}
 ?>
-<html>
-   
+
+<?php
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // collect value of input field
+    $id = mysqli_real_escape_string($db,$_REQUEST['entrega_id']);
+    $atual = mysqli_real_escape_string($db,$_REQUEST['atual']);  
+    if (empty($id)) {
+        echo "Entrega inválida";
+    } else {
+         $sql3 = "update entregas set status = '$atual' where ID = '$id'";
+        if (mysqli_query($db,$sql3) === TRUE) {
+            header("Refresh:0");
+        } else {
+            echo "entrega inválida!";
+        }
+}
+}
+    
+?>
+<html>   
    <head>
       <title>Funcionario </title>
-   </head>
-   
+	<style>
+    table , td, th{
+        border: 1px black solid;
+    }
+    table{
+        border-collapse: collapse;
+        width:100%;
+    }
+    
+    th, td {
+        text-align: left;
+        padding: 8px;
+    }
+    
+    th{
+        background-color:#4CAF50;
+        color: white;
+    }
+    </style>   
+   </head>   
    <body>
-      <h1>Funcionario <?php echo $login_session; ?></h1> 
-      <h2><a href = "logout.php">Sign Out</a></h2>
-	  
-     <form action="?b=ok" method="POST">
-		    <input type="submit" value="Próximo!" />
-	</form>      
+
+<table>	
+    <tr>
+        <th>ID</th>
+        <th>Endereço</th>
+        <th>Status</th>
+    </tr>
 <?php
-
-
-        if (isset( $_GET['b']) && $_GET['b'] == 'ok'){
-		        if (mysqli_num_rows($result) > 0) {
+	if (mysqli_num_rows($result) > 0) {
 			        // output data of each linha
-			        while( $linha = mysqli_fetch_assoc($result)){//$linha = mysqli_fetch_assoc($result)) {
-                        $entrega = $linha["ID"];
-                        ?>
-                            <a href = "alterastatus.php"><?php echo $entrega; $entrega_id = $entrega; ?></a>
- <?php
-				        echo  " " . $linha["ender"] . " " . $linha["status"] .  "<br>"
-                        ;
-                        
-			        }    
-                } else {
-			        echo "0 results";
-		        }      
-        }
-?>      
-      
-    <input list="atual" placeholder = "Atualiza Status">
-    <datalist id="atual">
-        <option value="">
-        <option value="Loja">
-        <option value="Estoque">
-        <option value="Entregue">
-        <option value="Devolvido">
-    </datalist>
+	   while( $linha = mysqli_fetch_assoc($result)){
+?>
+    <tr>
+        <td><?php echo  $linha["ID"] ?></td>
+        <td><?php echo  $linha["ender"] ?></td>
+        <td><?php echo  $linha["status"] ?></td>
+    </tr>
+<?php
+    }
+    }
+?>
+</table>
+     
     </br>
-    </br>   	   
-     <form action="?a=ok" method="POST">
-		    <input type="submit" value="Atualiza!" />
-	</form>      
+<form method="post" action="<?php //    echo $_SERVER['PHP_SELF'];?>">
+  IDentrega: <input type="text" value="" placeholder="Entrega a ser alterada" name="entrega_id" id ="entrega_id" >
+  <select name="atual" >
+  <option value="">Escolha estado:</option>
+  <option value="Estoque">Estoque</option>
+  <option value="Pendente">Pendente</option>
+  <option value="Entregue">Entregue</option>
+  <option value="Devolvido">Devolvido</option>
+  </select>
+  <input type="submit" value = "Atualiza!">
+</form>       	
 
 
-</body>
-   
+<div id="confirmaalt"></div>      
+</body>   
 </html>

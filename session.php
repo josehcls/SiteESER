@@ -11,6 +11,7 @@
    $login_session = $row['username'];
    $password_session = $row['password'];
    $tipo_session = (int) $row['tipo'];
+
    
    if(!isset($_SESSION['login_user'])){
       header("location:login.php");
